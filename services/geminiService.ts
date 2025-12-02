@@ -1,22 +1,39 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY || '');
+// NOTE: In a real app, never expose API keys on the client. 
+// This is for demonstration purposes within the sandboxed environment requirements.
+// The system prompt injects process.env.API_KEY automatically.
 
-export const generateMarketingHeadline = async (product: string): Promise<string> => {
-  if (!import.meta.env.VITE_API_KEY) {
-    console.warn("API Key is missing. Returning mock data.");
-    return `Warning: Your ${product} Strategy Is Burning Cash. Fix It Now.`;
+export const generateBlogContent = async (topic: string, tone: string = 'professional'): Promise<string> => {
+  if (!process.env.API_KEY) {
+    throw new Error("API Key not found");
   }
 
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.generateContent(
-      `You are a world-class direct response copywriter like David Ogilvy or Gary Halbert. Write a short, punchy, controversial, or curiosity-inducing "Hook" (under 12 words) for an ad selling "${product}". The goal is to stop the scroll. Do not use quotes.`
-    );
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    return result.response.text() || "They laughed when I sat down, but then I started selling.";
+  const prompt = `
+    Write a comprehensive, engaging, and SEO-optimized blog post about "${topic}".
+    Tone: ${tone}.
+    Format: Markdown.
+    Structure:
+    - Catchy Title (do not label it "Title")
+    - Engaging Introduction
+    - 3-4 Clear Main Headings (H2)
+    - Bullet points where appropriate
+    - Strong Conclusion
+    
+    Do not include any preamble like "Here is the blog post". Just start writing.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    
+    return response.text || "Failed to generate content.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Error generating hook. Please try again.";
+    throw new Error("Failed to generate content. Please check your API key.");
   }
 };

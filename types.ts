@@ -1,66 +1,35 @@
-import { ReactNode } from 'react';
-
-export type Page = 'home' | 'newsletter' | 'book' | 'blog' | 'admin';
-
-export interface NavItem {
-  label: string;
-  id: Page | string;
-  type: 'page' | 'link';
-}
-
-export interface Feature {
-  title: string;
-  description: string;
-  icon: ReactNode;
-}
-
-export interface PricingTier {
-  name: string;
-  price: string;
-  features: string[];
-  recommended?: boolean;
-}
-
 export interface BlogPost {
-  id: number;
+  id: string;
   title: string;
-  category: string;
+  slug: string;
   excerpt: string;
-  content?: string; // Full content
-  readTime: string;
-  image: string; // CSS class for gradient
-  date: string;
+  content: string;
+  category?: string;
+  coverImage?: string;
+  publishedAt: string;
+  status: 'draft' | 'published';
 }
 
 export interface Lead {
   id: string;
-  name: string;
   email: string;
+  name?: string;
   phone?: string;
+  type: 'newsletter' | 'contact';
   message?: string;
-  date: string;
-  type: 'call_request' | 'contact';
+  createdAt: string;
 }
 
-export interface Subscriber {
+export interface User {
   id: string;
   email: string;
-  date: string;
+  role: 'admin';
 }
 
-export interface SiteSettings {
-  brandName: string;
-  brandAccent: string;
-  logoIcon: 'zap' | 'rocket' | 'target' | 'bar-chart';
-  customLogo?: string; // Base64 string of the generated logo
-  social: {
-    instagram: string;
-    linkedin: string;
-    twitter: string;
-    facebook: string;
-  };
-  seo: {
-    title: string;
-    description: string;
-  };
+export enum PageView {
+  HOME = 'HOME',
+  BLOG_INDEX = 'BLOG_INDEX',
+  BLOG_POST = 'BLOG_POST',
+  ADMIN_LOGIN = 'ADMIN_LOGIN',
+  ADMIN_DASHBOARD = 'ADMIN_DASHBOARD',
 }
